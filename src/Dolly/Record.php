@@ -34,8 +34,11 @@ class Record {
             $fields[$key] = $this->storage->quote($value);
         }
 
+        $columns = array_map(function($i) {
+            return '"' . $i . '"';
+        }, array_keys($fields));
         // First insert the main record
-        $query = 'INSERT INTO ' . $this->table . ' (' . implode(',', array_keys($fields)) . ')
+        $query = 'INSERT INTO ' . $this->table . ' (' . implode(',', $columns) . ')
                   VALUES (\'' . implode('\',\'', array_values($fields)) . '\')';
         $this->storage->query($query);
 
