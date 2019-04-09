@@ -14,7 +14,7 @@ final class HasManyTest extends \PHPUnit\Framework\TestCase {
         $parent = new Record('parent', $storage);
         $parent->id = 15;
 
-        $association->setParent($parent);
+        $association->setRecord($parent);
         $players = $association->create($storage);
 
         $this->assertEquals('Test', $players[0]->username);

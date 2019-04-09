@@ -78,6 +78,22 @@ final class FactoryTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals($player->id, $player->castle->player_id);
     }
 
+    public function test_define_allows_specifynig_belongs_to_associations() {
+        Factory::define('player', array(
+            'username' => 'Test',
+        ));
+        Factory::define('castle', array(
+            'x' => 10,
+            'y' => 20,
+            'player' => Factory::belongsTo('player', 'player_id')
+        ));
+
+        $castle = Factory::create('castle');
+
+        $this->assertEquals('Test', $castle->player->username);
+        $this->assertEquals($castle->player_id, $castle->player->id);
+    }
+
     public function test_define_allows_specifying_has_many_associations() {
         Factory::define('skill', array(
             'name' => 'Archery',

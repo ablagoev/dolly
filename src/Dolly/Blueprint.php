@@ -90,13 +90,31 @@ class Blueprint {
             $hook->execute($record);
         }
 
+        // Check all associations that execute before the record is created and initialize them properly
+        foreach ($this->associations as $key => $value) {
+            if (!$value->isBefore()) {
+                continue;
+            }
+
+            if (!isset($associations[$key])) {
+                $value->setRecord($record);
+                $record->{$key} = $value->create($storage);
+            } else {
+                $record->{$key} = $associations[$key];
+            }
+        }
+
         // Save record
         $record->save();
 
-        // Check all associations and initialize them properly
+        // Check all associations that execute after the record is created and initialize them properly
         foreach ($this->associations as $key => $value) {
+            if (!$value->isAfter()) {
+                continue;
+            }
+
             if (!isset($associations[$key])) {
-                $value->setParent($record);
+                $value->setRecord($record);
                 $record->{$key} = $value->create($storage);
             } else {
                 $record->{$key} = $associations[$key];

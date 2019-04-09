@@ -46,12 +46,16 @@ class Factory {
         return new Sequence($callback);
     }
 
-    public static function hasMany($blueprint, $key) {
-        return new Association\HasMany(self::$blueprints[$blueprint], $key);
+    public static function hasMany($blueprint, $foreignKey, $key = 'id') {
+        return new Association\HasMany(self::$blueprints[$blueprint], $foreignKey, $key);
     }
 
-    public static function hasOne($blueprint, $key) {
-        return new Association\HasOne(self::$blueprints[$blueprint], $key);
+    public static function hasOne($blueprint, $foreignKey, $key = 'id') {
+        return new Association\HasOne(self::$blueprints[$blueprint], $foreignKey, $key);
+    }
+
+    public static function belongsTo($blueprint, $foreignKey, $key = 'id') {
+        return new Association\BelongsTo(self::$blueprints[$blueprint], $foreignKey, $key);
     }
 
     public static function table($table) {

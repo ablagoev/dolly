@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace Dolly;
 use Dolly\Blueprint;
 use Dolly\Storage;
+use Dolly\Record;
 
-class Association {
+abstract class Association {
     protected $key;
     protected $blueprint;
-    protected $parent;
     protected $foreignKey;
+    protected $record;
 
     public function __construct(Blueprint $blueprint, $foreignKey, $key = 'id') {
         $this->blueprint = $blueprint;
@@ -19,11 +20,12 @@ class Association {
         $this->key = $key;
     }
 
-    public function setParent(Record $parent) {
-        $this->parent = $parent;
+    public function setRecord(Record $record) {
+        $this->record = $record;
     }
 
-    public function create(Storage $storage) {
-        return $this->blueprint->create(array($this->foreignKey => $this->parent->{$this->key}), $storage);
-    }
+    abstract public function isBefore(): bool;
+    abstract public function isAfter(): bool;
+
+    abstract public function create(Storage $storage);
 }

@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 use Dolly\Blueprint;
 use Dolly\Storage\Blackhole;
-use Dolly\Association;
+use Dolly\Association\HasOne;
+use Dolly\Association\BelongsTo;
 use Dolly\Sequence;
 use Dolly\Hook;
 use Dolly\Table;
@@ -47,7 +48,7 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         ));
         $playerBlueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
-            'castle' => new Association($castleBlueprint, 'player_id')
+            'castle' => new HasOne($castleBlueprint, 'player_id')
         ));
 
         $castle = $castleBlueprint->create(array(), $storage);
@@ -57,7 +58,7 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(10, $player->castle->y);
     }
 
-    public function test_create_creates_associations() {
+    public function test_create_creates_after_associations() {
         $storage = new Blackhole();
 
         $castleBlueprint = new Blueprint('castle', array(
@@ -66,7 +67,7 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         ));
         $playerBlueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
-            'castle' => new Association($castleBlueprint, 'player_id')
+            'castle' => new HasOne($castleBlueprint, 'player_id')
         ));
 
         $player = $playerBlueprint->create(array('id' => 11), $storage);
@@ -74,6 +75,25 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(20, $player->castle->x);
         $this->assertEquals(10, $player->castle->y);
         $this->assertEquals($player->id, $player->castle->player_id);
+    }
+
+    public function test_create_creates_before_associations() {
+        $storage = new Blackhole();
+
+        $castleBlueprint = new Blueprint('castle', array(
+            'x' => 20,
+            'y' => 10,
+        ));
+        $unitBlueprint = new Blueprint('unit', array(
+            'unit_id' => 16,
+            'castle' => new BelongsTo($castleBlueprint, 'castle_id')
+        ));
+
+        $unit = $unitBlueprint->create(array('id' => 11), $storage);
+
+        $this->assertEquals(20, $unit->castle->x);
+        $this->assertEquals(10, $unit->castle->y);
+        $this->assertEquals($unit->castle_id, $unit->castle->id);
     }
 
     public function test_create_uses_sequences() {
@@ -155,7 +175,7 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         ));
         $blueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
-            'castle' => new Association($castleBlueprint, 'player_id')
+            'castle' => new HasOne($castleBlueprint, 'player_id')
         ));
 
         $player = $blueprint->create(array(), $storage);
