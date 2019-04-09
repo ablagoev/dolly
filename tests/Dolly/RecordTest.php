@@ -32,7 +32,7 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $storage->expects($this->once())
                 ->method('query')
                 ->with($this->logicalAnd(
-                    $this->stringContains('INSERT INTO players (username,email)'),
+                    $this->stringContains('INSERT INTO players ("username","email")'),
                     $this->stringContains('VALUES (\'Test\',\'test@example.com\'')
                 ))
                 ->will($this->returnValue(true));
@@ -51,7 +51,7 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $storage->expects($this->once())
                 ->method('query')
                 ->with($this->logicalAnd(
-                    $this->stringContains('INSERT INTO players (username,email)'),
+                    $this->stringContains('INSERT INTO players ("username","email")'),
                     $this->stringContains('VALUES (\'Test\',\'test@example.com\'')
                 ))
                 ->will($this->returnValue(true));
@@ -70,7 +70,7 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $storage->expects($this->once())
                 ->method('query')
                 ->with($this->logicalAnd(
-                    $this->stringContains('INSERT INTO players (username,email)'),
+                    $this->stringContains('INSERT INTO players ("username","email")'),
                     $this->stringContains('VALUES (\'Test\',\'test@example.com\'')
                 ))
                 ->will($this->returnValue(true));
