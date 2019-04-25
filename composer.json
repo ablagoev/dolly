@@ -27,6 +27,9 @@
 			"tests": [
 				"phpunit -c tests/phpunit.xml --colors=always tests/"
 			],
+			"lint": [
+				"phpcs --standard=PSR2 tests/ src/"
+			],
 			"format": [
 				"phpcbf --standard=PSR2 tests/ src/"
 			]
