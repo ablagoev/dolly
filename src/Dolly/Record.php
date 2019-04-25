@@ -29,6 +29,11 @@ class Record
             if ($value instanceof Record) {
                 continue;
             }
+            // TODO: clean this up, needed
+            // for overriding associations by field only
+            if ($value instanceof \stdClass) {
+                continue;
+            }
 
             if (is_array($value)) {
                 continue;

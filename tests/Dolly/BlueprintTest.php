@@ -66,6 +66,46 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(10, $player->castle->y);
     }
 
+    public function test_create_allows_overriding_before_associations()
+    {
+        $storage = new Blackhole();
+
+        $playerBlueprint = new Blueprint('player', array(
+            'username' => 'TestUsername',
+        ));
+        $castleBlueprint = new Blueprint('castle', array(
+            'x' => 20,
+            'y' => 10,
+            'player' => new BelongsTo($playerBlueprint, 'player_id'),
+        ));
+
+        $player = $playerBlueprint->create(array(), $storage);
+        $castle = $castleBlueprint->create(array('player' => $player), $storage);
+
+        $this->assertEquals($player->id, $castle->player->id);
+        $this->assertEquals($player->id, $castle->player_id);
+        $this->assertEquals('TestUsername', $castle->player->username);
+    }
+
+    public function test_create_removes_before_associations_if_foreign_key_is_supplied()
+    {
+        $storage = new Blackhole();
+
+        $playerBlueprint = new Blueprint('player', array(
+            'username' => 'TestUsername',
+        ));
+        $castleBlueprint = new Blueprint('castle', array(
+            'x' => 20,
+            'y' => 10,
+            'player' => new BelongsTo($playerBlueprint, 'player_id'),
+        ));
+
+        $player = $playerBlueprint->create(array(), $storage);
+        $castle = $castleBlueprint->create(array('player_id' => $player->id), $storage);
+
+        $this->assertEquals($player->id, $castle->player_id);
+    }
+
     public function test_create_creates_after_associations()
     {
         $storage = new Blackhole();

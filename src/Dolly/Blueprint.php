@@ -72,6 +72,21 @@ class Blueprint
             }
         }
 
+        // Check for supplied keys which override associations
+        foreach ($this->associations as $field => $association) {
+            $key = $association->getKey();
+            $foreignKey = $association->getForeignKey();
+            if (isset($fields[$foreignKey])) {
+                // TODO: If you try to access the associated record
+                // this might be suprising behaviour (returning an object of a different type containing only the field)
+                // Fix is complicated atm, though, as the record needs to be fetched
+                // somehow
+                $object = new \stdClass();
+                $object->{$key} = $fields[$foreignKey];
+                $associations[$field] = $object;
+            }
+        }
+
         // Create sequences
         foreach ($this->sequences as $key => $sequence) {
             if (!isset($fields[$key])) {
@@ -94,16 +109,20 @@ class Blueprint
         }
 
         // Check all associations that execute before the record is created and initialize them properly
-        foreach ($this->associations as $key => $value) {
+        foreach ($this->associations as $field => $value) {
             if (!$value->isBefore()) {
                 continue;
             }
 
-            if (!isset($associations[$key])) {
+            if (!isset($associations[$field])) {
                 $value->setRecord($record);
-                $record->{$key} = $value->create($storage);
+                $record->{$field} = $value->create($storage);
             } else {
-                $record->{$key} = $associations[$key];
+                $record->{$field} = $associations[$field];
+                // Set the foreign key properly
+                $key = $this->associations[$field]->getKey();
+                $foreignKey = $this->associations[$field]->getForeignKey();
+                $record->{$foreignKey} = $associations[$field]->{$key};
             }
         }
 

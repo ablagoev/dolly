@@ -28,6 +28,16 @@ abstract class Association
         $this->record = $record;
     }
 
+    public function getForeignKey()
+    {
+        return $this->foreignKey;
+    }
+
+    public function getKey()
+    {
+        return $this->key;
+    }
+
     abstract public function isBefore(): bool;
     abstract public function isAfter(): bool;
 

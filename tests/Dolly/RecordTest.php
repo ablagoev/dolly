@@ -66,6 +66,26 @@ final class RecordTest extends \PHPUnit\Framework\TestCase
         $record->save();
     }
 
+    public function test_save_works_properly_with_fields_as_classes()
+    {
+        $storage = $this->getMockBuilder(Blackhole::class)
+                        ->setMethods(['query'])
+                        ->getMock();
+
+        $storage->expects($this->once())
+                ->method('query')
+                ->with($this->logicalAnd(
+                    $this->stringContains('INSERT INTO players ("username","email")'),
+                    $this->stringContains('VALUES (\'Test\',\'test@example.com\'')
+                ))
+                ->will($this->returnValue(true));
+
+        $record = new Record('players', $storage);
+        $record->setFields(array('username' => 'Test', 'email' => 'test@example.com', 'child' => new \stdClass()));
+
+        $record->save();
+    }
+
     public function test_save_works_properly_with_associated_collections()
     {
         $storage = $this->getMockBuilder(Blackhole::class)
