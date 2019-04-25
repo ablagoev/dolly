@@ -4,8 +4,10 @@ declare(strict_types=1);
 use Dolly\Storage\Blackhole;
 use Dolly\Record;
 
-final class RecordTest extends \PHPUnit\Framework\TestCase {
-    public function test_setFields_sets_the_record_fields() {
+final class RecordTest extends \PHPUnit\Framework\TestCase
+{
+    public function test_setFields_sets_the_record_fields()
+    {
         $storage = new Blackhole();
 
         $fields = array(
@@ -24,7 +26,8 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(4, $record->value_four);
     }
 
-    public function test_save_sql_inserts_the_record_through_the_storage() {
+    public function test_save_sql_inserts_the_record_through_the_storage()
+    {
         $storage = $this->getMockBuilder(Blackhole::class)
                         ->setMethods(['query'])
                         ->getMock();
@@ -43,7 +46,8 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $record->save();
     }
 
-    public function test_save_works_properly_with_associated_records() {
+    public function test_save_works_properly_with_associated_records()
+    {
         $storage = $this->getMockBuilder(Blackhole::class)
                         ->setMethods(['query'])
                         ->getMock();
@@ -62,7 +66,8 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $record->save();
     }
 
-    public function test_save_works_properly_with_associated_collections() {
+    public function test_save_works_properly_with_associated_collections()
+    {
         $storage = $this->getMockBuilder(Blackhole::class)
                         ->setMethods(['query'])
                         ->getMock();
@@ -81,7 +86,8 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $record->save();
     }
 
-    public function test_save_sets_id_primary_key_by_default() {
+    public function test_save_sets_id_primary_key_by_default()
+    {
         $storage = new Blackhole();
 
         $record = new Record('players', $storage);
@@ -91,7 +97,8 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $this->assertGreaterThan(0, $record->id);
     }
 
-    public function test_save_populates_supplied_primary_key() {
+    public function test_save_populates_supplied_primary_key()
+    {
         $storage = new Blackhole();
 
         $record = new Record('players', $storage);
@@ -103,7 +110,8 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $this->assertFalse(isset($record->id));
     }
 
-    public function test_save_works_when_no_last_insert_id_is_returned() {
+    public function test_save_works_when_no_last_insert_id_is_returned()
+    {
         $storage = $this->getMockBuilder(Blackhole::class)
                         ->setMethods(['getLastInsertId'])
                         ->getMock();
@@ -121,7 +129,8 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $this->assertFalse(isset($record->id));
     }
 
-    public function test_it_allows_setting_fields_directly() {
+    public function test_it_allows_setting_fields_directly()
+    {
         $storage = new Blackhole();
         $record = new Record('players', $storage);
         $record->player_id = 10;
@@ -129,7 +138,8 @@ final class RecordTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(10, $record->player_id);
     }
 
-    public function test_it_allows_checking_if_a_field_is_set() {
+    public function test_it_allows_checking_if_a_field_is_set()
+    {
         $storage = new Blackhole();
         $record = new Record('players', $storage);
         $record->player_id = 10;

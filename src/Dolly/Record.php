@@ -3,23 +3,27 @@ declare(strict_types=1);
 
 namespace Dolly;
 
-class Record {
+class Record
+{
     protected $table;
     protected $storage;
     protected $fields;
 
     protected $primaryKey = null;
 
-    public function __construct($table, $storage) {
+    public function __construct($table, $storage)
+    {
         $this->table = $table;
         $this->storage = $storage;
     }
 
-    public function setFields($fields) {
+    public function setFields($fields)
+    {
         $this->fields = $fields;
     }
 
-    public function save() {
+    public function save()
+    {
         $fields = [];
         foreach ($this->fields as $key => $value) {
             if ($value instanceof Record) {
@@ -34,7 +38,7 @@ class Record {
             $fields[$key] = $this->storage->quote($value);
         }
 
-        $columns = array_map(function($i) {
+        $columns = array_map(function ($i) {
             return '"' . $i . '"';
         }, array_keys($fields));
         // First insert the main record
@@ -47,7 +51,7 @@ class Record {
         if ($lastInsertId) {
             if ($this->primaryKey) {
                 $this->fields[$this->primaryKey] = $lastInsertId;
-            } else if (!isset($this->fields['id'])) {
+            } elseif (!isset($this->fields['id'])) {
                 // If the query returned an ID, but no primary
                 // key has been supplied explicitly
                 // use the id column as a primary key
@@ -59,11 +63,13 @@ class Record {
         return true;
     }
 
-    public function setPrimaryKey($key) {
+    public function setPrimaryKey($key)
+    {
         $this->primaryKey = $key;
     }
 
-    public function __get($name) {
+    public function __get($name)
+    {
         if (isset($this->fields[$name])) {
             return $this->fields[$name];
         }
@@ -71,11 +77,13 @@ class Record {
         throw new \Exception('Unknown attribute ' . $name);
     }
 
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         $this->fields[$name] = $value;
     }
 
-    public function __isset($name) {
+    public function __isset($name)
+    {
         if (isset($this->fields[$name])) {
             return true;
         }

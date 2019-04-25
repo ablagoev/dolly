@@ -11,39 +11,43 @@ use Dolly\Table;
 use Dolly\PrimaryKey;
 use Dolly\Factory;
 
-final class BlueprintTest extends \PHPUnit\Framework\TestCase {
+final class BlueprintTest extends \PHPUnit\Framework\TestCase
+{
     /**
      * create() tests
      */
-	public function test_create_returns_a_record_based_on_the_blueprint() {
-		$blueprint = new Blueprint('player', array(
-			'username' => 'TestUsername',
-			'email' => 'test@example.com',
-			'password' => '123456'
-		));
-		$storage = new Blackhole();
+    public function test_create_returns_a_record_based_on_the_blueprint()
+    {
+        $blueprint = new Blueprint('player', array(
+            'username' => 'TestUsername',
+            'email' => 'test@example.com',
+            'password' => '123456'
+        ));
+        $storage = new Blackhole();
 
-		$record = $blueprint->create(array(), $storage);
+        $record = $blueprint->create(array(), $storage);
 
-		$this->assertEquals('TestUsername', $record->username);
-		$this->assertEquals('test@example.com', $record->email);
-		$this->assertEquals('123456', $record->password);
-	}
-
-    public function test_create_allows_overriding_blueprint_fields() {
-		$blueprint = new Blueprint('player', array(
-			'username' => 'TestUsername',
-			'email' => 'test@example.com',
-			'password' => '123456'
-		));
-		$storage = new Blackhole();
-
-		$record = $blueprint->create(array('username' => 'modified'), $storage);
-
-		$this->assertEquals('modified', $record->username);
+        $this->assertEquals('TestUsername', $record->username);
+        $this->assertEquals('test@example.com', $record->email);
+        $this->assertEquals('123456', $record->password);
     }
 
-    public function test_create_allows_overriding_associations() {
+    public function test_create_allows_overriding_blueprint_fields()
+    {
+        $blueprint = new Blueprint('player', array(
+            'username' => 'TestUsername',
+            'email' => 'test@example.com',
+            'password' => '123456'
+        ));
+        $storage = new Blackhole();
+
+        $record = $blueprint->create(array('username' => 'modified'), $storage);
+
+        $this->assertEquals('modified', $record->username);
+    }
+
+    public function test_create_allows_overriding_associations()
+    {
         $storage = new Blackhole();
 
         $castleBlueprint = new Blueprint('castle', array(
@@ -62,7 +66,8 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(10, $player->castle->y);
     }
 
-    public function test_create_creates_after_associations() {
+    public function test_create_creates_after_associations()
+    {
         $storage = new Blackhole();
 
         $castleBlueprint = new Blueprint('castle', array(
@@ -81,7 +86,8 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals($player->id, $player->castle->player_id);
     }
 
-    public function test_create_creates_before_associations() {
+    public function test_create_creates_before_associations()
+    {
         $storage = new Blackhole();
 
         $castleBlueprint = new Blueprint('castle', array(
@@ -100,12 +106,13 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals($unit->castle_id, $unit->castle->id);
     }
 
-    public function test_create_uses_sequences() {
+    public function test_create_uses_sequences()
+    {
         $storage = new Blackhole();
 
         $blueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
-            'email' => new Sequence(function($n) {
+            'email' => new Sequence(function ($n) {
                 return 'test' . $n . '@example.com';
             })
         ));
@@ -115,13 +122,14 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('test1@example.com', $player->email);
     }
 
-    public function test_create_calls_before_hooks() {
+    public function test_create_calls_before_hooks()
+    {
         $storage = new Blackhole();
 
         $that = $this;
         $blueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
-            'after' => new Hook\Before(function($record) use ($that) {
+            'after' => new Hook\Before(function ($record) use ($that) {
                 $that->assertEquals('TestUsername', $record->username);
             }),
         ));
@@ -129,13 +137,14 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $player = $blueprint->create(array(), $storage);
     }
 
-    public function test_create_calls_after_hooks() {
+    public function test_create_calls_after_hooks()
+    {
         $storage = new Blackhole();
 
         $that = $this;
         $blueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
-            'after' => new Hook\After(function($record) use ($that) {
+            'after' => new Hook\After(function ($record) use ($that) {
                 $that->assertEquals('TestUsername', $record->username);
             }),
         ));
@@ -143,7 +152,8 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $player = $blueprint->create(array(), $storage);
     }
 
-    public function test_create_saves_the_record() {
+    public function test_create_saves_the_record()
+    {
         $storage = $this->getMockBuilder(Blackhole::class)
                         ->setMethods(['query'])
                         ->getMock();
@@ -160,7 +170,8 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $player = $blueprint->create(array(), $storage);
     }
 
-    public function test_create_saves_associated_records() {
+    public function test_create_saves_associated_records()
+    {
         $storage = $this->getMockBuilder(Blackhole::class)
                         ->setMethods(['query'])
                         ->getMock();
@@ -185,7 +196,8 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $player = $blueprint->create(array(), $storage);
     }
 
-    public function test_create_derives_table_name_from_pluralized_blueprint_name() {
+    public function test_create_derives_table_name_from_pluralized_blueprint_name()
+    {
         $storage = $this->getMockBuilder(Blackhole::class)
                         ->setMethods(['query'])
                         ->getMock();
@@ -202,7 +214,8 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $player = $blueprint->create(array(), $storage);
     }
 
-    public function test_create_allows_overriding_the_table_name() {
+    public function test_create_allows_overriding_the_table_name()
+    {
         $storage = $this->getMockBuilder(Blackhole::class)
                         ->setMethods(['query'])
                         ->getMock();
@@ -220,7 +233,8 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $player = $blueprint->create(array(), $storage);
     }
 
-    public function test_create_allows_overriding_the_primary_key() {
+    public function test_create_allows_overriding_the_primary_key()
+    {
         $storage = new Blackhole();
 
         $blueprint = new Blueprint('player', array(
@@ -236,13 +250,14 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
     /**
      * addSequnce() tests
      */
-    public function test_addSequence_adds_defined_sequences_to_blueprint() {
+    public function test_addSequence_adds_defined_sequences_to_blueprint()
+    {
         $storage = new Blackhole();
 
         $blueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
         ));
-        $blueprint->addSequence('email', Factory::sequence(function($n) {
+        $blueprint->addSequence('email', Factory::sequence(function ($n) {
             return $n . '@example.com';
         }));
 
@@ -254,7 +269,8 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
     /**
      * addField() tests
      */
-    public function test_addField_adds_field_to_blueprint() {
+    public function test_addField_adds_field_to_blueprint()
+    {
         $storage = new Blackhole();
 
         $blueprint = new Blueprint('player', array(
@@ -270,16 +286,17 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
     /**
      * registerHook() tests
      */
-    public function test_registerHook_adds_hooks_to_blueprint() {
+    public function test_registerHook_adds_hooks_to_blueprint()
+    {
         $storage = new Blackhole();
 
         $blueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
             'email' => 'test@example.com',
-            'before' => Factory::beforeHook(function($player) {
+            'before' => Factory::beforeHook(function ($player) {
                 $player->email = 'modified@example.com';
             }),
-            'after' => Factory::afterHook(function($player) {
+            'after' => Factory::afterHook(function ($player) {
                 $player->username = 'ModifiedInAfter';
             }),
         ));

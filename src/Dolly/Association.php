@@ -2,17 +2,20 @@
 declare(strict_types=1);
 
 namespace Dolly;
+
 use Dolly\Blueprint;
 use Dolly\Storage;
 use Dolly\Record;
 
-abstract class Association {
+abstract class Association
+{
     protected $key;
     protected $blueprint;
     protected $foreignKey;
     protected $record;
 
-    public function __construct(Blueprint $blueprint, $foreignKey, $key = 'id') {
+    public function __construct(Blueprint $blueprint, $foreignKey, $key = 'id')
+    {
         $this->blueprint = $blueprint;
         // Child column name
         $this->foreignKey = $foreignKey;
@@ -20,7 +23,8 @@ abstract class Association {
         $this->key = $key;
     }
 
-    public function setRecord(Record $record) {
+    public function setRecord(Record $record)
+    {
         $this->record = $record;
     }
 

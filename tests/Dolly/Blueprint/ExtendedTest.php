@@ -6,18 +6,21 @@ use Dolly\Blueprint\Extended;
 use Dolly\Storage\Blackhole;
 use Dolly\Factory;
 
-final class ExtendedTest extends \PHPUnit\Framework\TestCase {
-    public function setUp(): void {
+final class ExtendedTest extends \PHPUnit\Framework\TestCase
+{
+    public function setUp(): void
+    {
         parent::setUp();
 
-		$this->blueprint = new Blueprint('player', array(
+        $this->blueprint = new Blueprint('player', array(
             'username' => 'TestUsername',
             'data' => '1234',
         ));
         $this->storage = new Blackhole();
     }
 
-    public function test_allows_overriding_fields_in_original_definition() {
+    public function test_allows_overriding_fields_in_original_definition()
+    {
         $blueprint = new Extended($this->blueprint, 'player_with_modified', array(
             'username' => 'Modified'
         ));
@@ -27,7 +30,8 @@ final class ExtendedTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('Modified', $record->username);
     }
 
-    public function test_allows_adding_fields() {
+    public function test_allows_adding_fields()
+    {
         $blueprint = new Extended($this->blueprint, 'player_with_modified', array(
             'email' => 'test@example.com'
         ));
@@ -37,9 +41,10 @@ final class ExtendedTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('test@example.com', $record->email);
     }
 
-    public function test_allows_adding_sequences() {
+    public function test_allows_adding_sequences()
+    {
         $blueprint = new Extended($this->blueprint, 'player_with_modified', array(
-            'email' => Factory::sequence(function($n) {
+            'email' => Factory::sequence(function ($n) {
                 return $n . '@example.com';
             })
         ));
@@ -49,12 +54,13 @@ final class ExtendedTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('1@example.com', $record->email);
     }
 
-    public function test_allows_adding_hooks() {
+    public function test_allows_adding_hooks()
+    {
         $blueprint = new Extended($this->blueprint, 'player_with_modified', array(
-            'before' => Factory::afterHook(function($player) {
+            'before' => Factory::afterHook(function ($player) {
                 $player->username = 'Modified';
             }),
-            'after' => Factory::afterHook(function($player) {
+            'after' => Factory::afterHook(function ($player) {
                 $player->data = 'modified';
             })
         ));

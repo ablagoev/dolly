@@ -7,8 +7,10 @@ use Dolly\Association\HasOne;
 use Dolly\Blueprint;
 use Dolly\Record;
 
-final class HasOneTest extends \PHPUnit\Framework\TestCase {
-    public function test_create_creates_the_associated_record() {
+final class HasOneTest extends \PHPUnit\Framework\TestCase
+{
+    public function test_create_creates_the_associated_record()
+    {
         $association = new HasOne(new Blueprint('player', array('username' => 'Test')), 'player_id', 'id');
         $storage = new Blackhole();
         $parent = new Record('parent', $storage);
@@ -21,7 +23,8 @@ final class HasOneTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(15, $player->player_id);
     }
 
-    public function test_create_uses_id_as_the_default_parent_key() {
+    public function test_create_uses_id_as_the_default_parent_key()
+    {
         $association = new HasOne(new Blueprint('player', array('username' => 'Test')), 'player_id');
         $storage = new Blackhole();
         $parent = new Record('parent', $storage);

@@ -1,7 +1,8 @@
 <?php
 namespace Dolly;
 
-interface Storage {
+interface Storage
+{
     public function quote($value);
     public function query($query);
     public function getLastInsertId();

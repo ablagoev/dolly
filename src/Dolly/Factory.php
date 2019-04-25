@@ -5,15 +5,18 @@ namespace Dolly;
 
 // TODO: throw exception if storage is not configured
 
-class Factory {
+class Factory
+{
     protected static $blueprints;
     protected static $storage;
 
-    public static function setup($options) {
+    public static function setup($options)
+    {
         self::$storage = $options['storage'];
     }
 
-    public static function define($blueprint, $options) {
+    public static function define($blueprint, $options)
+    {
         if (!isset(self::$blueprints)) {
             self::$blueprints = array();
         }
@@ -25,7 +28,8 @@ class Factory {
         self::$blueprints[$blueprint] = new Blueprint($blueprint, $options);
     }
 
-    public static function extend($blueprint, $name, $options) {
+    public static function extend($blueprint, $name, $options)
+    {
         if (!isset(self::$blueprints) || !isset(self::$blueprints[$blueprint])) {
             throw new \Exception('Factory ' . $blueprint . ' does not exist for extension.');
         }
@@ -38,7 +42,8 @@ class Factory {
         self::$blueprints[$name] = new Blueprint\Extended(self::$blueprints[$blueprint], $name, $options);
     }
 
-    public static function create($blueprint, $options = array()) {
+    public static function create($blueprint, $options = array())
+    {
         if (!isset(self::$blueprints[$blueprint])) {
             throw new \Exception('Factory ' . $blueprint . ' not registered.');
         }
@@ -46,7 +51,8 @@ class Factory {
         return self::$blueprints[$blueprint]->create($options, self::$storage);
     }
 
-    public static function createList($blueprint, $count, $options) {
+    public static function createList($blueprint, $count, $options)
+    {
         $list = array();
         for ($i = 0; $i < $count; $i++) {
             $list[] = self::create($blueprint, $options);
@@ -55,39 +61,48 @@ class Factory {
         return $list;
     }
 
-    public static function sequence($callback) {
+    public static function sequence($callback)
+    {
         return new Sequence($callback);
     }
 
-    public static function hasMany($blueprint, $foreignKey, $key = 'id') {
+    public static function hasMany($blueprint, $foreignKey, $key = 'id')
+    {
         return new Association\HasMany(self::$blueprints[$blueprint], $foreignKey, $key);
     }
 
-    public static function hasOne($blueprint, $foreignKey, $key = 'id') {
+    public static function hasOne($blueprint, $foreignKey, $key = 'id')
+    {
         return new Association\HasOne(self::$blueprints[$blueprint], $foreignKey, $key);
     }
 
-    public static function belongsTo($blueprint, $foreignKey, $key = 'id') {
+    public static function belongsTo($blueprint, $foreignKey, $key = 'id')
+    {
         return new Association\BelongsTo(self::$blueprints[$blueprint], $foreignKey, $key);
     }
 
-    public static function table($table) {
+    public static function table($table)
+    {
         return new Table($table);
     }
 
-    public static function primaryKey($key) {
+    public static function primaryKey($key)
+    {
         return new PrimaryKey($key);
     }
 
-    public static function afterHook($callback) {
+    public static function afterHook($callback)
+    {
         return new Hook\After($callback);
     }
 
-    public static function beforeHook($callback) {
+    public static function beforeHook($callback)
+    {
         return new Hook\Before($callback);
     }
 
-    public static function clear() {
+    public static function clear()
+    {
         self::$blueprints = [];
     }
 }

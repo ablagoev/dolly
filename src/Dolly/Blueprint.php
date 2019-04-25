@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Dolly;
 
-class Blueprint {
+class Blueprint
+{
     protected $name;
     protected $table;
     protected $associations;
@@ -14,7 +15,8 @@ class Blueprint {
     protected $beforeHooks;
     protected $afterHooks;
 
-    public function __construct($name, $options) {
+    public function __construct($name, $options)
+    {
         $this->name = $name;
         $this->associations = array();
         $this->sequences = array();
@@ -56,7 +58,8 @@ class Blueprint {
         }
     }
 
-    public function create($options, $storage) {
+    public function create($options, $storage)
+    {
         // Add all overriden fields
         $fields = array_replace($this->fields, $options);
         $associations = array();
@@ -129,15 +132,18 @@ class Blueprint {
         return $record;
     }
 
-    public function addSequence($key, $sequence) {
+    public function addSequence($key, $sequence)
+    {
         $this->sequences[$key] = $sequence;
     }
 
-    public function addField($key, $value) {
+    public function addField($key, $value)
+    {
         $this->fields[$key] = $value;
     }
 
-    public function registerHook($filter) {
+    public function registerHook($filter)
+    {
         if ($filter instanceof Hook\Before) {
             $this->beforeHooks[] = $filter;
             return;
