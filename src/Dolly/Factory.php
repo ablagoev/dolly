@@ -25,6 +25,19 @@ class Factory {
         self::$blueprints[$blueprint] = new Blueprint($blueprint, $options);
     }
 
+    public static function extend($blueprint, $name, $options) {
+        if (!isset(self::$blueprints) || !isset(self::$blueprints[$blueprint])) {
+            throw new \Exception('Factory ' . $blueprint . ' does not exist for extension.');
+        }
+
+        if (isset(self::$blueprints) && isset(self::$blueprints[$name])) {
+            throw new \Exception('Factory ' . $name . ' already defined.');
+        }
+
+        // Add a new blueprint
+        self::$blueprints[$name] = new Blueprint\Extended(self::$blueprints[$blueprint], $name, $options);
+    }
+
     public static function create($blueprint, $options = array()) {
         if (!isset(self::$blueprints[$blueprint])) {
             throw new \Exception('Factory ' . $blueprint . ' not registered.');

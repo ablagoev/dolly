@@ -9,8 +9,12 @@ use Dolly\Sequence;
 use Dolly\Hook;
 use Dolly\Table;
 use Dolly\PrimaryKey;
+use Dolly\Factory;
 
 final class BlueprintTest extends \PHPUnit\Framework\TestCase {
+    /**
+     * create() tests
+     */
 	public function test_create_returns_a_record_based_on_the_blueprint() {
 		$blueprint = new Blueprint('player', array(
 			'username' => 'TestUsername',
@@ -227,5 +231,62 @@ final class BlueprintTest extends \PHPUnit\Framework\TestCase {
         $player = $blueprint->create(array(), $storage);
 
         $this->assertGreaterThan(0, $player->player_id);
+    }
+
+    /**
+     * addSequnce() tests
+     */
+    public function test_addSequence_adds_defined_sequences_to_blueprint() {
+        $storage = new Blackhole();
+
+        $blueprint = new Blueprint('player', array(
+            'username' => 'TestUsername',
+        ));
+        $blueprint->addSequence('email', Factory::sequence(function($n) {
+            return $n . '@example.com';
+        }));
+
+        $player = $blueprint->create(array(), $storage);
+
+        $this->assertEquals('1@example.com', $player->email);
+    }
+
+    /**
+     * addField() tests
+     */
+    public function test_addField_adds_field_to_blueprint() {
+        $storage = new Blackhole();
+
+        $blueprint = new Blueprint('player', array(
+            'username' => 'TestUsername',
+        ));
+        $blueprint->addField('email', 'test@example.com');
+
+        $player = $blueprint->create(array(), $storage);
+
+        $this->assertEquals('test@example.com', $player->email);
+    }
+
+    /**
+     * registerHook() tests
+     */
+    public function test_registerHook_adds_hooks_to_blueprint() {
+        $storage = new Blackhole();
+
+        $blueprint = new Blueprint('player', array(
+            'username' => 'TestUsername',
+            'email' => 'test@example.com',
+            'before' => Factory::beforeHook(function($player) {
+                $player->email = 'modified@example.com';
+            }),
+            'after' => Factory::afterHook(function($player) {
+                $player->username = 'ModifiedInAfter';
+            }),
+        ));
+
+        $player = $blueprint->create(array(), $storage);
+
+        $this->assertEquals('ModifiedInAfter', $player->username);
+        $this->assertEquals('modified@example.com', $player->email);
     }
 }

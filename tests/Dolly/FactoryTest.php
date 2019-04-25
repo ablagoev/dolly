@@ -141,6 +141,48 @@ final class FactoryTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
+     * extend tests
+     */
+    public function test_extend_allows_reusing_factories() {
+        Factory::define('player', array(
+            'username' => 'Test',
+        ));
+        Factory::define('castle', array(
+            'x' => 10,
+        ));
+        Factory::extend('player', 'player_with_castles', array(
+            'username' => 'Modified',
+            'after' => Factory::afterHook(function($player) {
+                $player->castles = Factory::createList('castle', 2, array('player_id' => $player->id));
+            })
+        ));
+
+        $player = Factory::create('player_with_castles');
+
+        $this->assertEquals('Modified', $player->username);
+        $this->assertEquals(10, $player->castles[0]->x);
+    }
+
+    public function test_extend_throws_if_original_blueprint_is_not_defined() {
+        $this->expectException(\Exception::class);
+
+        Factory::extend('player', 'player_with_castles', array(
+            'username' => 'Modified',
+        ));
+    }
+
+    public function test_extend_throws_if_factory_is_already_defined() {
+        $this->expectException(\Exception::class);
+
+        Factory::extend('player', 'player_with_castles', array(
+            'username' => 'Modified',
+        ));
+        Factory::extend('player', 'player_with_castles', array(
+            'username' => 'Modified',
+        ));
+    }
+
+    /**
      * create tests
      */
     public function test_create_allows_overriding_the_primary_key() {

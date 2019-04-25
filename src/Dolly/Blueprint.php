@@ -37,7 +37,7 @@ class Blueprint {
             }
 
             if ($option instanceof Sequence) {
-                $this->sequences[$key] = $option;
+                $this->addSequence($key, $option);
                 continue;
             }
 
@@ -52,7 +52,7 @@ class Blueprint {
             }
 
             // Normal field
-            $this->fields[$key] = $option;
+            $this->addField($key, $option);
         }
     }
 
@@ -129,7 +129,15 @@ class Blueprint {
         return $record;
     }
 
-    protected function registerHook($filter) {
+    public function addSequence($key, $sequence) {
+        $this->sequences[$key] = $sequence;
+    }
+
+    public function addField($key, $value) {
+        $this->fields[$key] = $value;
+    }
+
+    public function registerHook($filter) {
         if ($filter instanceof Hook\Before) {
             $this->beforeHooks[] = $filter;
             return;
