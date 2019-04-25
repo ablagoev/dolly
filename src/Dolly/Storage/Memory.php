@@ -12,7 +12,7 @@ class Memory implements Storage {
     }
 
     public function query($query) {
-        echo $query . PHP_EOL;
+        //echo $query . PHP_EOL;
     }
 
     public function getLastInsertId() {
